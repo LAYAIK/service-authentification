@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: La@YaiK3
+      POSTGRES_DB: minader_auth
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  service_authentification:
+    build: .
+    environment:
+      DATABASE_URL: postgres://postgres:La@YaiK3@db:5432/minader_auth
+      JWT_SECRET: "RXCT34ZE5GFDSFD756"
+      JWT_EXPIRES_IN: 1d
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    volumes:
+      - .:/service_authentification
+
+
+volumes:
+  db-data:
