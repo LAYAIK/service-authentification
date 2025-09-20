@@ -13,6 +13,14 @@ const Utilisateur = sequelize.define('Utilisateur', {
   prenoms: {
     type: DataTypes.STRING(100),
     allowNull: true // Prénoms peuvent être optionnels
+  },  
+  image_profile_url: { // Nouvelle colonne pour le lien de l'image
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  id_structure: {
+    type: DataTypes.UUID,
+    allowNull: true
   },
   adresse_email: {
     type: DataTypes.STRING(100),

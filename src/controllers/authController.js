@@ -11,6 +11,7 @@ import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/jwtConfig.js';
 
 const loginController = async (req, res) => {
 const { adresse_email, password } = req.body || {};
+console.log('Tentative de connexion pour:', adresse_email , password ? 'avec mot de passe fourni' : 'sans mot de passe');
 
     if (!adresse_email || !password) {
         return res.status(400).json({message: "Email et mot de passe sont requis"});

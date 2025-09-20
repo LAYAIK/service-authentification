@@ -1,5 +1,6 @@
 import { createUserController, getAllUsersController,getUserByIdController,deleteUserController,updateUserController,authenticateUserController,searchUserController } from "../controllers/utilisateurController.js";
 import express from "express";
+import upload from '../config/multerConfig.js';
 
 /**
  * @swagger
@@ -50,6 +51,11 @@ import express from "express";
  *         justificatif:
  *           type: string
  *           example: justificatif.pdf
+ *         profile_image_url:
+ *           type: string
+ *           format: binary
+ *           description: URL de l'image de profil de l'utilisateur
+ *           example: https://example.com/profile.jpg
  *       required:
  *         - noms
  *         - adresse_email
@@ -83,7 +89,7 @@ import express from "express";
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -131,6 +137,11 @@ import express from "express";
  *                 type: boolean
  *                 description: Indique si l'utilisateur est actif
  *                 example: true
+ *               profile_image:
+ *                 type: string
+ *                 format: binary
+ *                 description: URL de l'image de profil de l'utilisateur
+ *                 example: "https://example.com/profile.jpg"
  *     responses:
  *       201:
  *         description: Utilisateur crée avec succès
@@ -209,7 +220,7 @@ import express from "express";
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -256,6 +267,11 @@ import express from "express";
  *                 format: string
  *                 description: Adresse email de l'utilisateur
  *                 example: "n5z8o@example.com"
+ *               profile_image:
+ *                 type: string
+ *                 format: binary
+ *                 description: URL de l'image de profil de l'utilisateur
+ *                 example: "https://example.com/profile.jpg"
  *     responses:
  *       200:
  *         description: Utilisateur mis à jour avec succès
@@ -357,14 +373,14 @@ import express from "express";
 const router = express.Router();
 // Route pour créer un utilisateur
 router.route('/api/utilisateurs')
-    .post(createUserController)
+    .post(upload.single('profile_image'),createUserController)
     .get(getAllUsersController);
 router.route('/api/utilisateurs/search')
     .get(searchUserController);
 router.route('/api/utilisateurs/:id')
     .get(getUserByIdController)
     .delete(deleteUserController)
-    .put(updateUserController); 
+    .put(upload.single('profile_image'),updateUserController); 
 router.route('/api/utilisateurs/authenticate')  
     .post(authenticateUserController); 
 // Exporter le routeur

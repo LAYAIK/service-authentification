@@ -3,10 +3,16 @@ const { Utilisateur } = db;
 import { Op } from "sequelize";
 import generateToken from "./generateToken.js";
 import bcrypt from "bcrypt";
-
+import { JWT_SECRET } from "../config/jwtConfig.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import fs from 'fs/promises';   
 // Création d'un utilisateur
 async function createUserController(req, res) {
-    const { adresse_email, password, password_confirmation, noms, prenoms, fonction,direction , justificatif,id_role, id_structure,is_actif } = req.body;
+    const { adresse_email, password, password_confirmation, noms, prenoms, fonction,direction , justificatif,id_role, id_structure,is_actif,} = req.body;
+    const image_profile_url = req.file ? `/uploads/profiles/${req.file.filename}` : null;
 
     if (!adresse_email || !password || !noms || !password_confirmation) {
         return res.status(400).json({message: "Email, password et noms sont requis"});
@@ -29,6 +35,7 @@ async function createUserController(req, res) {
         if(justificatif) newUser.justificatif = justificatif;
         if(is_actif) newUser.is_actif = is_actif;
         if(prenoms) newUser.prenoms = prenoms;
+        if(image_profile_url) newUser.image_profile_url = image_profile_url;
         await newUser.save();
 
         // Exclure le mot de passe de la réponse
@@ -59,7 +66,7 @@ async function getAllUsersController(req, res) {
         if (!users || users.length === 0) {
             return res.status(404).json({message: "Aucun utilisateur trouvé"});
         }
-        return res.status(200).json({data: users});
+        return res.status(200).json(users);
     } catch (error) {
         console.error('Erreur durant la recherche des utilisateurs:', error);
         return res.status(500).json({ message: "Erreur dans l'application"});
@@ -100,6 +107,7 @@ async function getUserByIdController(req, res) {
 async function updateUserController(req, res) {
     const { id } = req.params;
     const { adresse_email, password, noms, prenoms, fonction, direction, justificatif, id_role, id_structure, is_actif } = req.body;
+    const image_profile = req.file;
 
     if (!id) {
         return res.status(400).json({ message: "ID ou adresse_email est requis" });
@@ -122,6 +130,26 @@ async function updateUserController(req, res) {
         if (!user) {
             return res.status(404).json({ message: "Utilisateur non trouvé" });
         }
+
+
+            // Check if a new profile picture was uploaded
+    if (image_profile) {
+      // Logic to delete the old profile picture
+      if (user.image_profile_url) {
+        const oldImagePath = path.join(__dirname, user.image_profile_url);
+        
+        // **Check if the old file exists before trying to delete it**
+        try {
+          await fs.stat(oldImagePath); // This will throw an error if the file doesn't exist
+          await fs.unlink(oldImagePath); // Delete the old file
+          console.log(`Ancien fichier supprimé: ${oldImagePath}`);
+        } catch (fileError) {
+          // Log the error but don't stop the process, as the file might have been already deleted
+          console.warn(`Erreur lors de la suppression de l'ancien fichier: ${oldImagePath}, ` + fileError.message);
+        }
+      }
+      user.image_profile_url = `/uploads/profiles/${image_profile.filename}`;
+    }
 
         if (password) {
             user.password = await bcrypt.hash(password, 10);

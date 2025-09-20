@@ -6,6 +6,9 @@ import { pinoHttp } from 'pino-http';
 import 'dotenv/config'; // charge les variables d'environnement à partir du fichier .env
 import swaggerSetup from './swagger.js';
 import ApiRoutes from './src/routes/index.js'; // importation des routes d'authentification
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 
 const app = express(); // création de l'application express
@@ -20,6 +23,21 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   exposedHeaders: ['Authorization']
 }));
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Define the uploads directory path
+const uploadDir = path.join(__dirname, 'uploads', 'profiles');
+
+// Check if the directory exists, if not, create it
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log('Created uploads directory.');
+}
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // Middleware pour parser le JSON
