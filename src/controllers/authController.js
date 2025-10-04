@@ -19,11 +19,11 @@ console.log('Tentative de connexion pour:', adresse_email , password ? 'avec mot
     try {
         const user = await Utilisateur.findOne({ where: { adresse_email } });
         if (!user) {
-            return res.status(401).json({message: "Identifiants invalides"});
+            return res.status(401).json({ message: "Identifiants invalides" });
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).json({message: "Identifiants invalides"});
+            return res.status(401).json({ message: "Identifiants invalides" });
         }
         const token = generateToken(user.id_utilisateur ); // Génération du token JWT
 
@@ -121,7 +121,7 @@ const registerController = async (req, res) => {
     }
     };
 
-    async function verificationTokenController(req, res) {
+async function verificationTokenController(req, res) {
   try {
     console.log('🔐 Requête de vérification de token reçue');
     

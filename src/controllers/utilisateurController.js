@@ -66,7 +66,7 @@ async function getAllUsersController(req, res) {
         if (!users || users.length === 0) {
             return res.status(404).json({message: "Aucun utilisateur trouvé"});
         }
-        return res.status(200).json(users);
+        res.status(200).json(users);
     } catch (error) {
         console.error('Erreur durant la recherche des utilisateurs:', error);
         return res.status(500).json({ message: "Erreur dans l'application"});
