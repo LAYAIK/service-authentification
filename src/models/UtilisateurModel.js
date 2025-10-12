@@ -58,7 +58,7 @@ const Utilisateur = sequelize.define('Utilisateur', {
 });
 // Association entre Utilisateur et Structure
 Utilisateur.associate = (models) => {
-  Utilisateur.belongsToMany(models.Role, { through: models.UtilisateurRole, foreignKey: 'id_utilisateur', onUpdate: 'CASCADE', onDelete: 'CASCADE' });
+  Utilisateur.hasOne(models.Role, {onUpdate: 'CASCADE', onDelete: 'CASCADE' });
 };
 return Utilisateur;
 };

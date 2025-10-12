@@ -1,4 +1,4 @@
-import db from '../models/index.js'; 
+/* import db from '../models/index.js'; 
 
 // C'est un objet qui mappe une permission à ses exigences de scope spécifiques.
 const PERMISSION_SCOPE_REQUIREMENTS = {
@@ -66,4 +66,15 @@ const authorizeWithScopes = (requiredPermission, scopeContext = null) => {
     };
 };
  
-export default authorizeWithScopes;
+export default authorizeWithScopes; */
+
+// Middleware pour vérifier les scopes requis
+function requireScopes(...requiredScopes) {
+  return (req, res, next) => {
+    const userScopes = Array.isArray(req.user?.scopes) ? req.user.scopes : [];
+    const hasAll = requiredScopes.every(s => userScopes.includes(s));
+    if (!hasAll) return res.status(403).json({ error: "Insufficient scope", required: requiredScopes, have: userScopes });
+    next();
+  };
+}
+export default requireScopes;

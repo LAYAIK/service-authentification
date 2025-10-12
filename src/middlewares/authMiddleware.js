@@ -46,7 +46,7 @@ const { Utilisateur } = db;
 
 const authorize = (...roles) => { // Prend un tableau de rôles autorisés (ex: 'admin', 'agent')
   return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    if (!req.user || !roles.includes(req.user.id_role)) {
       return res.status(403).json({ message: 'Accès refusé, vous n\'avez pas la permission pour cette action.' });
     }
     next();

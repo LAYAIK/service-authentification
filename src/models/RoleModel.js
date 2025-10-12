@@ -21,9 +21,8 @@ const Role = sequelize.define('Role', {
     underscored: true
 });
 Role.associate = (models) => {
-    Role.belongsToMany(models.Utilisateur, { through: models.UtilisateurRole, foreignKey: 'id_role', onUpdate: 'CASCADE', onDelete: 'CASCADE' });
-    Role.belongsToMany(models.Permission, { through: models.RolePermission, foreignKey: 'id_role', ortherkey: 'id_permission', onUpdate: 'CASCADE', onDelete: 'CASCADE'});
-    
+    Role.hasMany(models.Utilisateur, { onUpdate: 'CASCADE', onDelete: 'CASCADE' });
+    Role.belongsToMany(models.Scope, { through: models.RoleScope ,foreignKey: 'id_role'})
 };
 
 return Role;

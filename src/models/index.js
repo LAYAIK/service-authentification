@@ -48,15 +48,14 @@ db.sequelize = sequelize; // La connexion est déjà importé
 // Assurez-vous que les noms des fichiers correspondent et que vous les ajoutez à l'objet db
 import Utilisateur from './UtilisateurModel.js'
 import Role from './RoleModel.js';
-import Permission from './PermissionModel.js';
-import RolePermission from './RolePermissionModel.js';
-import UtilisateurRole from './UtilisateurRoleModel.js';
+import Scope from './ScopeModel.js';
+import RoleScope from './RoleScopeModel.js';
+
 
 db.Role = Role(sequelize, DataTypes);
 db.Utilisateur = Utilisateur(sequelize, DataTypes);
-db.Permission = Permission(sequelize, DataTypes);
-db.RolePermission = RolePermission(sequelize, DataTypes);
-db.UtilisateurRole = UtilisateurRole(sequelize, DataTypes);
+db.Scope = Scope(sequelize,DataTypes);
+db.RoleScope = RoleScope(sequelize, DataTypes);
 
 
 // Définissez les associations après que tous les modèles ont été chargés

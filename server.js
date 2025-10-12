@@ -15,9 +15,8 @@ async function runApplication() {
         // Vérifiez très attentivement ces lignes pour les fautes de frappe ou les noms de modèles incorrects
         await db.Role.sync({ alter: true });
         await db.Utilisateur.sync({ alter: true });
-        await db.UtilisateurRole.sync({ alter: true });
-        await db.Permission.sync({ alter: true });
-        await db.RolePermission.sync({ alter: true });
+        await db.Scope.sync({alter: true});
+        await db.RoleScope.sync({alter: true});
        
 
         console.log('Tables synchronisées avec succès.');
