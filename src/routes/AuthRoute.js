@@ -105,7 +105,7 @@ const router = express.Router();
  *         description: Erreur lors de l'envoi de la demande d'accès
  */
 
-router.post('/api/login', loginController); // Route pour l'authentification de l'utilisateur
+router.post('/api/login',loginController); // Route pour l'authentification de l'utilisateur
 router.post('/api/register', registerController); // Route pour la création d'un nouvel utilisateur
 router.post('/api/ask', askController); // Route pour la demande d'accès a l'application par un l'utilisateur
 router.get('/api/verify', verificationTokenController); // Route pour la vérification du token JWT

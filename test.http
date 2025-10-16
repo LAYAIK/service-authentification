@@ -1,0 +1,26 @@
+POST http://localhost:3001/api/scopes
+Content-Type: application/json
+
+{
+  "libelle": "delete:Archive",
+  "description": ""
+}
+###
+
+POST http://localhost:3001/api/roleScopes
+Content-Type: application/json
+  
+  {
+    "id_scope": "3c77ab52-7586-4c79-a948-cc28b20457fe",
+    "id_role": "7d6229a3-5242-42cd-9056-fe1c030e42bd",
+    "description": "admin lecture courrier"
+  }
+###
+
+POST http://localhost:3001/api/login
+Content-Type: application/json
+  
+  {
+    "password": "1admin",
+    "adresse_email": "1admin@admin.com"
+  }

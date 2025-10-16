@@ -23,7 +23,7 @@ export const getAllRoles = async(req, res) => {
         if (roles.length === 0) {
             return res.status(404).json({ message: 'Aucun rôle trouvé' });
         }
-        res.status(200).json(roles);
+        res.status(200).json({data: roles});
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erreur lors de la récupération des rôles' });

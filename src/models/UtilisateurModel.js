@@ -50,6 +50,11 @@ const Utilisateur = sequelize.define('Utilisateur', {
     type: DataTypes.BOOLEAN,
     defaultValue: false, // Par défaut, l'utilisateur n'est pas actif
     allowNull: false
+  },
+  telephone: {
+    type: DataTypes.STRING(20),
+    defaultValue: false, // Par défaut, l'utilisateur n'est pas actif
+    allowNull: false
   }
 }, {
   tableName: 'Utilisateurs',

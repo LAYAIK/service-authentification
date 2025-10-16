@@ -1,5 +1,5 @@
 import db from "../models/index.js";
-const { Utilisateur } = db;
+const { Utilisateur, RoleScope } = db;
 import { Op } from "sequelize";
 import generateToken from "./generateToken.js";
 import bcrypt from "bcrypt";
@@ -23,9 +23,26 @@ console.log('Tentative de connexion pour:', adresse_email , password ? 'avec mot
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ message: "Identifiants invalides" });
+            return res.status(402).json({ message: "Identifiants invalides" });
         }
-        const token = generateToken(user.id_utilisateur ); // Génération du token JWT
+        if (!user.is_actif) {
+          return res.status(403).json({ message: "Compte inactive" });
+        }
+        console.log('data user: ', user);
+        // Récupérer tous les id_scope liés à cet utilisateur
+        const roleScopes = await RoleScope.findAll({
+            where: { id_role: user.RoleIdRole },
+            attributes: ['id_scope'],
+            raw: true
+        });
+        const scopeIds = roleScopes.map(rs => rs.id_scope);
+
+        const payload = { id: user.id_utilisateur, scopeIds };
+
+        console.log('payload login: ', payload);
+
+        // Générer le token JWT
+        const token = generateToken(payload);
 
         return res
             // .header('Authorization', `Bearer ${token}`) // Ajouter le token dans l'en-tête de la réponse
@@ -40,7 +57,8 @@ console.log('Tentative de connexion pour:', adresse_email , password ? 'avec mot
                 token,
                 message: "Authentification réussie",
                 data: user,
-                success: true
+                success: true,
+                scopeIds
             });
 
     } catch (error) {

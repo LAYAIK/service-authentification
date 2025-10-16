@@ -8,44 +8,40 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import fs from 'fs/promises';   
+import fs from 'fs/promises'; 
+import sequelize from "../config/sequelizeInstance.js";
+
+
 // Création d'un utilisateur
 async function createUserController(req, res) {
-    const { adresse_email, password, password_confirmation, noms, prenoms, fonction,direction , justificatif,id_role, id_structure,is_actif,} = req.body;
-    const image_profile_url = req.file ? `/uploads/profiles/${req.file.filename}` : null;
+    const { adresse_email, password,  noms, prenoms , id_structure} = req.body;
+ 
 
-    if (!adresse_email || !password || !noms || !password_confirmation) {
+    if (!adresse_email || !password || !noms ) {
         return res.status(400).json({message: "Email, password et noms sont requis"});
     }
-
-    if (password !== password_confirmation) {
-        return res.status(400).json({ message: "Veuillez vérifier les mots de passe" });
-    }
     try {
-        const user = await Utilisateur.findOne({ where: { adresse_email } });
+        const transactionResult = await sequelize.transaction( async (t) => {
+        const user = await Utilisateur.findOne({ where: { adresse_email } }, { transaction: t});
         if (user) {
             return res.status(409).json({ message: `L'utilisateur existe déjà`,user: user});
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await Utilisateur.create({adresse_email,noms,password: hashedPassword,});
-        if(id_role) newUser.id_role = id_role;
+        const newUser = await Utilisateur.create({ adresse_email,noms,password: hashedPassword}, { transaction: t});
         if(id_structure) newUser.id_structure = id_structure;
-        if(fonction) newUser.fonction = fonction;
-        if(direction) newUser.direction = direction;
-        if(justificatif) newUser.justificatif = justificatif;
-        if(is_actif) newUser.is_actif = is_actif;
         if(prenoms) newUser.prenoms = prenoms;
-        if(image_profile_url) newUser.image_profile_url = image_profile_url;
-        await newUser.save();
+        await newUser.save({ transaction: t});
 
         // Exclure le mot de passe de la réponse
         const { password: _, ...userResponse } = newUser.toJSON();
 
-        return res.status(201).json({
-            success: true,
+        return {
             message: "Utilisateur créé avec succès",
             data: userResponse
-        });
+        };
+
+    });
+     res.status(201).json(transactionResult);
 
     } catch (error) {
         console.error('Erreur de création de l\'utilisateur:', error);
@@ -97,7 +93,7 @@ async function getUserByIdController(req, res) {
         if (!user) {
             return res.status(404).json({ message: "Utilisateur non trouvé"});
         }
-        return res.status(200).json({data: user, message: "Utilisateur trouvé" });
+        return res.status(200).json(user);
 
     } catch (error) {
         console.error('Erreur lors de la récupération de l\'utilisateur:', error);
@@ -106,7 +102,7 @@ async function getUserByIdController(req, res) {
 }
 async function updateUserController(req, res) {
     const { id } = req.params;
-    const { adresse_email, password, noms, prenoms, fonction, direction, justificatif, id_role, id_structure, is_actif } = req.body;
+    const { adresse_email, password, noms, prenoms, fonction, direction, justificatif, RoleIdRole, id_structure, is_actif } = req.body;
     const image_profile = req.file;
 
     if (!id) {
@@ -160,7 +156,7 @@ async function updateUserController(req, res) {
         if (fonction) user.fonction = fonction;
         if (direction) user.direction = direction;
         if (justificatif) user.justificatif = justificatif;
-        if (id_role) user.id_role = id_role;
+        if (RoleIdRole) user.RoleIdRole = RoleIdRole;
         if (id_structure) user.id_structure = id_structure;
         if (typeof is_actif !== "undefined") user.is_actif = is_actif;
 

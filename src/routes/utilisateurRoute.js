@@ -1,6 +1,8 @@
 import { createUserController, getAllUsersController,getUserByIdController,deleteUserController,updateUserController,authenticateUserController,searchUserController } from "../controllers/utilisateurController.js";
 import express from "express";
 import upload from '../config/multerConfig.js';
+import multer from 'multer';
+import { authenticateToken,requireScopes } from '../middlewares/authMiddleware.js'
 
 /**
  * @swagger
@@ -372,15 +374,28 @@ import upload from '../config/multerConfig.js';
 
 const router = express.Router();
 // Route pour créer un utilisateur
+
+// Configure storage for Multer
+const storage = multer.diskStorage({
+    destination: (_, __, cb) => {
+        cb(null, 'uploads/'); // The directory where files will be saved
+    },
+    filename: (_, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname); // Unique filename
+    }
+});
+
+const uploads = multer({ storage: storage });
+
 router.route('/api/utilisateurs')
-    .post(upload.single('profile_image'),createUserController)
+    .post(createUserController)
     .get(getAllUsersController);
 router.route('/api/utilisateurs/search')
     .get(searchUserController);
 router.route('/api/utilisateurs/:id')
     .get(getUserByIdController)
-    .delete(deleteUserController)
-    .put(upload.single('profile_image'),updateUserController); 
+    .delete(authenticateToken, requireScopes("b8d37974-78d5-4f3a-9fd7-18b6238ca5ff"), deleteUserController)
+    .put(upload.single('profile_image'),authenticateToken, requireScopes("234db383-874f-4550-9322-bab7a268772b"), updateUserController); 
 router.route('/api/utilisateurs/authenticate')  
     .post(authenticateUserController); 
 // Exporter le routeur
