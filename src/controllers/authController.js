@@ -29,6 +29,7 @@ console.log('Tentative de connexion pour:', adresse_email , password ? 'avec mot
           return res.status(403).json({ message: "Compte inactive" });
         }
         console.log('data user: ', user);
+
         // Récupérer tous les id_scope liés à cet utilisateur
         const roleScopes = await RoleScope.findAll({
             where: { id_role: user.RoleIdRole },
@@ -37,7 +38,7 @@ console.log('Tentative de connexion pour:', adresse_email , password ? 'avec mot
         });
         const scopeIds = roleScopes.map(rs => rs.id_scope);
 
-        const payload = { id: user.id_utilisateur, scopeIds };
+        const payload = { id: user.id_utilisateur, scopeIds, structure: user.id_structure };
 
         console.log('payload login: ', payload);
 

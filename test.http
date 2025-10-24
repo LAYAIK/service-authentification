@@ -11,7 +11,7 @@ POST http://localhost:3001/api/roleScopes
 Content-Type: application/json
   
   {
-    "id_scope": "3c77ab52-7586-4c79-a948-cc28b20457fe",
+    "id_scope": "234db383-874f-4550-9322-bab7a268772b",
     "id_role": "7d6229a3-5242-42cd-9056-fe1c030e42bd",
     "description": "admin lecture courrier"
   }
